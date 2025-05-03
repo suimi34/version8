@@ -1,0 +1,31 @@
+services:
+  db:
+    image: mysql:5.7.44
+    platform: linux/x86_64
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+
+  web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - .:/version8
+      - bundle:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: version8_development
+      DB_USER: root
+      DB_PASS: root
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+  bundle:
