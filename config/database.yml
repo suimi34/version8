@@ -51,18 +51,19 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: version8_production
-    username: version8
-    password: <%= ENV["VERSION8_DATABASE_PASSWORD"] %>
+    port: <%= ENV["DB_PORT"] %>
+    username: <%= ENV["DB_USER"] %>
+    database: <%= ENV["DB_NAME"] %>
+    password: <%= ENV["DB_PASS"] %>
   cache:
     <<: *primary_production
-    database: version8_production_cache
-    migrations_paths: db/cache_migrate
+    # database: version8_production_cache
+  #   migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: version8_production_queue
-    migrations_paths: db/queue_migrate
+    # database: version8_production_queue
+  #   migrations_path: db/queue_migrate
   cable:
     <<: *primary_production
-    database: version8_production_cable
-    migrations_paths: db/cable_migrate
+    database: <%= ENV["DB_CABLE_NAME"] %>
+    # migrations_paths: db/cable_migrate
