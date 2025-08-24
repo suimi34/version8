@@ -1,0 +1,30 @@
+services:
+  test_db:
+    image: mysql:5.7.41
+    platform: linux/x86_64
+    volumes:
+      - test_db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+  test_web:
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3003 -b '0.0.0.0'"
+    volumes:
+      - .:/sandbox
+      - test_bundle:/usr/local/bundle
+    ports:
+      - "3003:3000"
+    environment:
+      DB_HOST: test_db
+      DB_PORT: 3306
+      DB_NAME: version8_test
+      DB_USER: root
+      DB_PASS: root
+      RAILS_ENV: test
+    depends_on:
+      - test_db
+
+volumes:
+  test_db_data:
+  test_bundle:
