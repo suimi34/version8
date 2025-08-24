@@ -64,5 +64,5 @@ jobs:
         run: make test_precompile
       - name: set up test migrate
         run: make test_migrate
-      # - name: run rspec
-      #   run: make rspec
+      - name: run rspec
+        run: make rspec
