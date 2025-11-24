@@ -1,0 +1,52 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "pull"
+      - "docker.io/${_DOCKER_USERNAME}/${_DOCKER_IMAGE}:prod"
+
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    args:
+      - "gcloud"
+      - "run"
+      - "deploy"
+      - "${_CLOUD_RUN_SERVICE}"
+      - "--image"
+      - "docker.io/${_DOCKER_USERNAME}/${_DOCKER_IMAGE}:prod"
+      - "--platform"
+      - "managed"
+      - "--region"
+      - "${_GCP_REGION}"
+      - "--project"
+      - "$PROJECT_ID"
+      - "--allow-unauthenticated"
+      - "--port"
+      - "3000"
+      - "--memory"
+      - "512Mi"
+      - "--cpu"
+      - "1"
+      - "--min-instances"
+      - "0"
+      - "--max-instances"
+      - "1"
+      - "--timeout"
+      - "300"
+      - "--set-env-vars"
+      - "RAILS_ENV=production,RAILS_MASTER_KEY=${_RAILS_MASTER_KEY},DB_HOST=${_DB_HOST},DB_PORT=${_DB_PORT},DB_NAME=${_DB_NAME},DB_USER=${_DB_USER},DB_PASS=${_DB_PASS},DB_CABLE_NAME=${_DB_CABLE_NAME},RAILS_MAX_THREADS=${_RAILS_MAX_THREADS},RAILS_LOG_TO_STDOUT=true"
+
+substitutions:
+  _DOCKER_USERNAME: "suimi34"
+  _DOCKER_IMAGE: "version8"
+  _CLOUD_RUN_SERVICE: "version8"
+  _GCP_REGION: "asia-northeast1"
+  _RAILS_MAX_THREADS: "5"
+  _DB_PORT: "3306"
+  _RAILS_MASTER_KEY: ""
+  _DB_HOST: ""
+  _DB_NAME: ""
+  _DB_USER: ""
+  _DB_PASS: ""
+  _DB_CABLE_NAME: ""
+
+options:
+  logging: CLOUD_LOGGING_ONLY
