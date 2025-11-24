@@ -17,7 +17,9 @@ services:
       - bundle:/usr/local/bundle
     ports:
       - "3000:3000"
+    env_file: []
     environment:
+      RAILS_ENV: development
       DB_HOST: db
       DB_PORT: 3306
       DB_NAME: version8_development
