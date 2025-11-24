@@ -51,7 +51,7 @@ rspec_down:
 # Cloud Build経由でデプロイ
 deploy:
 	@echo "🚀 Deploying via Cloud Build..."
-	@bash -c 'set -a && source .env && set +a && \
+	@bash -c 'set -a && source .env.production && set +a && \
 		gcloud builds submit --config cloudbuild.yaml \
 		  --project "$$GCP_PROJECT_ID" \
 			--substitutions _RAILS_MASTER_KEY="$$RAILS_MASTER_KEY",_DB_HOST="$$DB_HOST",_DB_NAME="$$DB_NAME",_DB_USER="$$DB_USER",_DB_PASS="$$DB_PASS",_DB_CABLE_NAME="$$DB_CABLE_NAME" \
