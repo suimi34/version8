@@ -1,6 +1,3 @@
--include .env
-export
-
 database:
 	docker compose up -d db
 
@@ -54,8 +51,9 @@ rspec_down:
 # Cloud Build経由でデプロイ
 deploy:
 	@echo "🚀 Deploying via Cloud Build..."
-	gcloud builds submit --config cloudbuild.yaml \
-		--project $(GCP_PROJECT_ID) \
-		--substitutions _RAILS_MASTER_KEY=$(RAILS_MASTER_KEY),_DB_HOST=$(DB_HOST),_DB_NAME=$(DB_NAME),_DB_USER=$(DB_USER),_DB_PASS=$(DB_PASS),_DB_CABLE_NAME=$(DB_CABLE_NAME) \
-		--no-source
+	@bash -c 'set -a && source .env && set +a && \
+		gcloud builds submit --config cloudbuild.yaml \
+		  --project "$$GCP_PROJECT_ID" \
+			--substitutions _RAILS_MASTER_KEY="$$RAILS_MASTER_KEY",_DB_HOST="$$DB_HOST",_DB_NAME="$$DB_NAME",_DB_USER="$$DB_USER",_DB_PASS="$$DB_PASS",_DB_CABLE_NAME="$$DB_CABLE_NAME" \
+			--no-source'
 	@echo "✅ Deployment completed!"

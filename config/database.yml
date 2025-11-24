@@ -19,6 +19,7 @@ default: &default
 
 development:
   <<: *default
+  host: db
   database: version8_development
 
 # Warning: The database defined as "test" will be erased and
@@ -51,6 +52,7 @@ test:
 production:
   primary: &primary_production
     <<: *default
+    host: <%= ENV["DB_HOST"] %>
     port: <%= ENV["DB_PORT"] %>
     username: <%= ENV["DB_USER"] %>
     database: <%= ENV["DB_NAME"] %>
