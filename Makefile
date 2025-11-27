@@ -81,3 +81,24 @@ deploy_migration:
 		echo "🧹 Cleaning up job..."'
 		# gcloud run jobs delete $$JOB_NAME --region "asia-northeast1" --project "$$GCP_PROJECT_ID" --quiet'
 	@echo "✅ Migration completed!"
+
+deploy_rollback:
+	@echo "🚀 Deploying rollback via Cloud Build..."
+	@bash -c 'set -a && source .env.production && set +a && \
+		gcloud run jobs create rollback-$$(date +%s) \
+		  --project "$$GCP_PROJECT_ID" \
+		  --region "asia-northeast1" \
+			--image docker.io/suimi34/version8:prod \
+			--set-env-vars "RAILS_ENV=production" \
+			--set-env-vars "RAILS_MASTER_KEY=$$RAILS_MASTER_KEY" \
+			--set-env-vars "DB_HOST=$$DB_HOST" \
+			--set-env-vars "DB_PORT=$$DB_PORT" \
+			--set-env-vars "DB_NAME=$$DB_NAME" \
+			--set-env-vars "DB_USER=$$DB_USER" \
+			--set-env-vars "DB_PASS=$$DB_PASS" \
+			--set-env-vars "DB_CABLE_NAME=$$DB_CABLE_NAME" \
+			--command "bundle" \
+			--args "exec,rails,db:rollback:primary" \
+			--execute-now \
+			--wait'
+	@echo "✅ Rollback completed!"
