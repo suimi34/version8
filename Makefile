@@ -57,3 +57,27 @@ deploy:
 			--substitutions _RAILS_MASTER_KEY="$$RAILS_MASTER_KEY",_DB_HOST="$$DB_HOST",_DB_NAME="$$DB_NAME",_DB_USER="$$DB_USER",_DB_PASS="$$DB_PASS",_DB_CABLE_NAME="$$DB_CABLE_NAME" \
 			--no-source'
 	@echo "✅ Deployment completed!"
+
+deploy_migration:
+	@echo "🚀 Deploying migration via Cloud Build..."
+	@bash -c 'set -a && source .env.production && set +a && \
+		JOB_NAME="db-migrate-$$(date +%s)" && \
+		gcloud run jobs create $${JOB_NAME} \
+		  --project "$$GCP_PROJECT_ID" \
+		  --region "asia-northeast1" \
+			--image docker.io/suimi34/version8:prod \
+			--set-env-vars "RAILS_ENV=production" \
+			--set-env-vars "RAILS_MASTER_KEY=$$RAILS_MASTER_KEY" \
+			--set-env-vars "DB_HOST=$$DB_HOST" \
+			--set-env-vars "DB_PORT=$$DB_PORT" \
+			--set-env-vars "DB_NAME=$$DB_NAME" \
+			--set-env-vars "DB_USER=$$DB_USER" \
+			--set-env-vars "DB_PASS=$$DB_PASS" \
+			--set-env-vars "DB_CABLE_NAME=$$DB_CABLE_NAME" \
+			--command "bundle" \
+			--args "exec,rails,db:migrate" \
+			--execute-now \
+			--wait && \
+		echo "🧹 Cleaning up job..."'
+		# gcloud run jobs delete $$JOB_NAME --region "asia-northeast1" --project "$$GCP_PROJECT_ID" --quiet'
+	@echo "✅ Migration completed!"
