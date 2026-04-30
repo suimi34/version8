@@ -38,9 +38,8 @@ test_bundle:
 test_db:
 	docker compose -f docker-compose.test.yml up -d test_db
 
-test_migrate:
-	docker compose -f docker-compose.test.yml run --rm --no-deps test_web rails db:create
-	docker compose -f docker-compose.test.yml run --rm --no-deps test_web rails db:migrate
+test_db_prepare:
+	docker compose -f docker-compose.test.yml run --rm --no-deps test_web bundle exec rails db:prepare
 
 rspec:
 	docker compose -f docker-compose.test.yml run --rm --no-deps test_web rspec spec/
