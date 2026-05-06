@@ -68,7 +68,7 @@ jobs:
       - name: set up test web asset
         run: make test_precompile
       - name: set up test migrate
-        run: make test_migrate
+        run: make test_db_prepare
       - name: run rspec
         run: make rspec
 
